@@ -1,14 +1,19 @@
 import React from 'react';
-import './App.css';
-import Map from './peta';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/navbar';
+import Home from './pages/home';
+import Map from './pages/peta';
 
-function App() {
+const App = () => {
   return (
-    <div className="w-full h-screen">
-      
-      <Map />
-    </div>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/peta" element={<Map />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+
+    .primary-btn {
+        @apply bg-primary text-white font-semibold py-3 px-6 
+        rounded-md   duration-300;
+    }
+}

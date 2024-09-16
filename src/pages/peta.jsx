@@ -1,7 +1,7 @@
 import React from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import BatasProvinsi from "./assets/provinsi.json";
+import BatasProvinsi from "../assets/provinsi.json";
 
 const Map = () => {
     const style = (feature) => {
@@ -25,6 +25,6 @@ const Map = () => {
       />
       <GeoJSON data={BatasProvinsi} style={style} />
     </MapContainer>
-  );
+  );  
 };
 export default Map;
