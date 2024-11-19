@@ -14,20 +14,21 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="w-full py-3 bg-red-100">
-        <div className="container mx-auto flex justify-between items-center px-6">
-          <Link to="/" className="text-2xl font-bold uppercase text-secondary hover:text-primary transition duration-300">
+      <nav className="w-full py-3 bg-[#263956] ">
+        <div className="container mx-auto flex justify-between items-center px-1">
+          <div>
+          <Link to="/" className=" text-2xl font-bold uppercase text-secondary hover:text-white transition duration-300">
             SIG
           </Link>
+          </div> 
 
-          {/* Right-aligned desktop menu */}
           <div className="hidden md:block">
             <ul className="flex items-center">
               {NavbarMenu.map((item) => (
                 <li key={item.id}>
                   <Link
                     to={item.link}
-                    className="inline-block py-1 px-3 hover:text-primary font-semibold transition duration-300"
+                    className="inline-block py-1 px-3 text-white hover:text-[#FFA500] font-semibold transition duration-300"
                   >
                     {item.title}
                   </Link>

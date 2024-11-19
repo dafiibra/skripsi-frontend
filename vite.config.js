@@ -9,4 +9,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    proxy: {
+      '/pencari-kerja': 'http://localhost:3000', // Proxy untuk endpoint API
+      '/lowongan-kerja': 'http://localhost:3000'  // Tambahkan proxy untuk endpoint lain jika perlu
+    }
+  }
 });
