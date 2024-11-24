@@ -14,7 +14,7 @@ L.Icon.Default.mergeOptions({
 });
 
 const provinceCoordinates = {
-  'ACEH': [4.695135, 96.749397],
+  'Aceh': [4.695135, 96.749397],
   'SUMATERA UTARA': [2.1153547, 99.5450974],
   'SUMATERA BARAT': [-0.7399397, 100.8000051],
   'RIAU': [0.2933469, 101.7068294],
@@ -49,6 +49,7 @@ const provinceCoordinates = {
   'PAPUA': [-4.269928, 138.0803137],
   'PAPUA BARAT': [-1.3361154, 133.1747162]
 };
+
 const Map = () => {
   const [selectedFilter, setSelectedFilter] = useState('Total Pencari Kerja');
   const [data, setData] = useState([]);
@@ -57,8 +58,12 @@ const Map = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/combined-data');
-        setData(response.data);
+        const response = await axios.get('http://localhost:3000/api/combined-data');
+        const normalizedData = response.data.map(item => ({
+          ...item,
+          PROVINSI: item.PROVINSI.toUpperCase()
+        }));
+        setData(normalizedData);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -80,7 +85,13 @@ const Map = () => {
   };
 
   const getDataForProvince = (province) => {
-    return data.find(item => item.PROVINSI === province);
+    const upperProvince = province.toUpperCase();
+    const found = data.find(item => item.PROVINSI === upperProvince);
+    if (!found) {
+      console.log(`No data found for province: ${province}`);
+      console.log('Available provinces:', data.map(item => item.PROVINSI));
+    }
+    return found;
   };
 
   const getDisplayValue = (provinceData) => {
@@ -129,8 +140,25 @@ const Map = () => {
             </div>
           </div>
         </div>
-        
-       
+      </div>
+
+      {/* Legend */}
+      <div className="absolute bottom-9 right-6 z-[1000] bg-white p-4 rounded-lg shadow-md">
+        <h3 className="font-bold mb-2 text-sm">Klasifikasi Berdasarkan {selectedFilter}</h3>
+        <div className="space-y-2">
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-red-500 mr-2"></div>
+            <span className="text-sm">{selectedFilter} &gt; 12</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-yellow-400 mr-2"></div>
+            <span className="text-sm">1186929.36 ≤ {selectedFilter} ≤ 1</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-green-500 mr-2"></div>
+            <span className="text-sm">{selectedFilter} &lt; 1</span>
+          </div>
+        </div>
       </div>
       
       <MapContainer
@@ -150,7 +178,7 @@ const Map = () => {
             <Marker key={province} position={coordinates}>
               <Popup>
                 <div className="font-sans">
-                  <h3 className="font-bold mb-2">Provinsi: {province}</h3>
+                  <h3 className="font-bold mb-2">PROVINSI: {province}</h3>
                   <p>{selectedFilter}: {getDisplayValue(provinceData)}</p>
                 </div>
               </Popup>

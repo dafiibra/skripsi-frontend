@@ -110,18 +110,81 @@ const AdminPage = () => {
 
   const handleSave = async (updatedRow) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/combined-data/${updatedRow.NO}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedRow),
+      const result = await swalWithBootstrapButtons.fire({
+        title: "Confirm Update",
+        text: "Are you sure you want to update this data?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, update it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true
       });
-      const result = await response.json();
-      setData(data.map(item => item.NO === result.NO ? result : item));
-      setShowModal(false);
-      showNotification('Data successfully updated!');
+  
+      if (result.isConfirmed) {
+        const updateData = {
+          pencariKerja: {},
+          lowonganKerja: {}
+        };
+  
+        // Check if PencariKerja data has changed
+        if (
+          updatedRow['PENCARI KERJA LAKI-LAKI'] !== editingRow['PENCARI KERJA LAKI-LAKI'] ||
+          updatedRow['PENCARI KERJA PEREMPUAN'] !== editingRow['PENCARI KERJA PEREMPUAN']
+        ) {
+          updateData.pencariKerja = {
+            lakiLaki: parseInt(updatedRow['PENCARI KERJA LAKI-LAKI']),
+            perempuan: parseInt(updatedRow['PENCARI KERJA PEREMPUAN'])
+          };
+        }
+  
+        // Check if LowonganKerja data has changed
+        if (
+          updatedRow['LOWONGAN KERJA LAKI-LAKI'] !== editingRow['LOWONGAN KERJA LAKI-LAKI'] ||
+          updatedRow['LOWONGAN KERJA PEREMPUAN'] !== editingRow['LOWONGAN KERJA PEREMPUAN']
+        ) {
+          updateData.lowonganKerja = {
+            lakiLaki: parseInt(updatedRow['LOWONGAN KERJA LAKI-LAKI']),
+            perempuan: parseInt(updatedRow['LOWONGAN KERJA PEREMPUAN'])
+          };
+        }
+  
+        // Only send request if there are changes
+        if (Object.keys(updateData.pencariKerja).length > 0 || Object.keys(updateData.lowonganKerja).length > 0) {
+          const response = await fetch(`http://localhost:3000/api/update/${updatedRow.PROVINSI}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateData),
+          });
+  
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to update data');
+          }
+  
+          await fetchData(); // Refresh the data
+          setShowModal(false);
+          
+          await swalWithBootstrapButtons.fire({
+            title: "Updated!",
+            text: "Your data has been updated successfully.",
+            icon: "success"
+          });
+        } else {
+          setShowModal(false);
+          await swalWithBootstrapButtons.fire({
+            title: "No Changes",
+            text: "No data was modified.",
+            icon: "info"
+          });
+        }
+      }
     } catch (err) {
-      showNotification('Failed to update item', 'error');
       console.error('Error updating item:', err);
+      await Swal.fire({
+        title: "Error!",
+        text: err.message || "Failed to update the data. Please try again.",
+        icon: "error"
+      });
     }
   };
 
@@ -135,7 +198,7 @@ const AdminPage = () => {
         });
         return;
       }
-
+  
       const result = await swalWithBootstrapButtons.fire({
         title: "Confirm Addition",
         text: "Are you sure you want to add this data?",
@@ -145,13 +208,35 @@ const AdminPage = () => {
         cancelButtonText: "No, cancel!",
         reverseButtons: true
       });
-
+  
       if (result.isConfirmed) {
+        // First, try to add the province
+        try {
+          const provinceResponse = await fetch('http://localhost:3000/api/provinsi', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: formData.PROVINSI })
+          });
+  
+          // If the province exists, the backend will return a 400 status
+          // We'll ignore that error and continue with adding data
+          if (!provinceResponse.ok && provinceResponse.status !== 400) {
+            throw new Error('Failed to add province');
+          }
+        } catch (provinceError) {
+          console.error('Province addition error:', provinceError);
+          await Swal.fire({
+            title: "Warning",
+            text: "Could not add province. It may already exist.",
+            icon: "warning"
+          });
+        }
+  
         // Create separate objects for each collection
         const pencariKerjaData = [];
         const lowonganKerjaData = [];
         const currentYear = new Date().getFullYear();
-
+  
         // Process job seeker data if provided
         if (formData['PENCARI KERJA LAKI-LAKI']) {
           pencariKerjaData.push({
@@ -161,7 +246,7 @@ const AdminPage = () => {
             year: currentYear
           });
         }
-
+  
         if (formData['PENCARI KERJA PEREMPUAN']) {
           pencariKerjaData.push({
             provinsi: formData.PROVINSI,
@@ -170,7 +255,7 @@ const AdminPage = () => {
             year: currentYear
           });
         }
-
+  
         // Process job vacancy data if provided
         if (formData['LOWONGAN KERJA LAKI-LAKI']) {
           lowonganKerjaData.push({
@@ -180,7 +265,7 @@ const AdminPage = () => {
             year: currentYear
           });
         }
-
+  
         if (formData['LOWONGAN KERJA PEREMPUAN']) {
           lowonganKerjaData.push({
             provinsi: formData.PROVINSI,
@@ -189,10 +274,10 @@ const AdminPage = () => {
             year: currentYear
           });
         }
-
+  
         // Send data to appropriate endpoints
         const requests = [];
-
+  
         if (pencariKerjaData.length > 0) {
           requests.push(
             fetch('http://localhost:3000/api/pencari-kerja', {
@@ -202,7 +287,7 @@ const AdminPage = () => {
             })
           );
         }
-
+  
         if (lowonganKerjaData.length > 0) {
           requests.push(
             fetch('http://localhost:3000/api/lowongan-kerja', {
@@ -212,10 +297,16 @@ const AdminPage = () => {
             })
           );
         }
-
+  
         // Wait for all requests to complete
-        await Promise.all(requests);
-
+        const responses = await Promise.all(requests);
+  
+        // Check if any request failed
+        const failedResponses = responses.filter(response => !response.ok);
+        if (failedResponses.length > 0) {
+          throw new Error('Failed to add some data');
+        }
+  
         // Refresh the data
         await fetchData();
         setShowModal(false);
@@ -229,7 +320,7 @@ const AdminPage = () => {
     } catch (err) {
       await Swal.fire({
         title: "Error!",
-        text: "Failed to add the data. Please try again.",
+        text: err.message || "Failed to add the data. Please try again.",
         icon: "error"
       });
       console.error('Error adding item:', err);
