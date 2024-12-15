@@ -4,6 +4,7 @@ import { Button, Modal, Label, TextInput, Alert } from 'flowbite-react';
 import { PlusCircle, LogOut } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -41,15 +42,16 @@ const AdminPage = () => {
   };
 
   const fetchData = async () => {
-    setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/combined-data');
-      const result = await response.json();
-      setData(result);
-    } catch (err) {
-      setError('Failed to fetch data');
-      console.error('Error fetching data:', err);
-    } finally {
+      const response = await axios.get(
+        'http://localhost:3000/api/combined-data'
+      );
+      const jsonData = await response.data.data;
+      setData(jsonData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Failed to fetch data: ' + error.message);
       setIsLoading(false);
     }
   };

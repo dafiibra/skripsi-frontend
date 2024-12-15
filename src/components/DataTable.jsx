@@ -5,7 +5,7 @@ import { Search, Download, Filter, RotateCcw, Edit, Trash } from 'lucide-react';
 const DataTable = ({ data, isAdmin, onEdit, onDelete }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterColumn, setFilterColumn] = useState('');
-  const [filterValue, setFilterValue] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
 
   const headers = [
     'NO',
@@ -22,19 +22,29 @@ const DataTable = ({ data, isAdmin, onEdit, onDelete }) => {
     headers.push('ACTIONS');
   }
 
-  const filterableColumns = headers.slice(2);
+  const sortableColumns = headers.slice(2);
 
   const filteredData = data.filter(row =>
     Object.values(row).some(value =>
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    ) &&
-    (filterColumn === '' || row[filterColumn]?.toString().includes(filterValue))
+    )
   );
+
+  const sortedData = filterColumn
+    ? filteredData.sort((a, b) => {
+        if (sortOrder === 'asc') {
+          return a[filterColumn] - b[filterColumn];
+        } else if (sortOrder === 'desc') {
+          return b[filterColumn] - a[filterColumn];
+        }
+        return 0;
+      })
+    : filteredData;
 
   const handleDownload = () => {
     const csvContent = [
       headers.join(','),
-      ...filteredData.map(row => headers.map(header => row[header]).join(','))
+      ...sortedData.map(row => headers.map(header => row[header]).join(','))
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -51,7 +61,7 @@ const DataTable = ({ data, isAdmin, onEdit, onDelete }) => {
   const resetFilters = () => {
     setSearchTerm('');
     setFilterColumn('');
-    setFilterValue('');
+    setSortOrder('');
   };
 
   return (
@@ -76,8 +86,8 @@ const DataTable = ({ data, isAdmin, onEdit, onDelete }) => {
               onChange={(e) => setFilterColumn(e.target.value)}
               className="w-full p-2 text-gray-700 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
             >
-              <option value="">Filter Column</option>
-              {filterableColumns.map((column, index) => (
+              <option value="">Urut Berdasarkan</option>
+              {sortableColumns.map((column, index) => (
                 <option key={index} value={column}>
                   {column}
                 </option>
@@ -88,17 +98,19 @@ const DataTable = ({ data, isAdmin, onEdit, onDelete }) => {
             </div>
           </div>
           {filterColumn && (
-            <input
-              type="text"
-              placeholder="Filter Value"
-              value={filterValue}
-              onChange={(e) => setFilterValue(e.target.value)}
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
               className="p-2 text-gray-700 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
-            />
+            >
+              <option value="">Urutan</option>
+              <option value="asc">Terkecil</option>
+              <option value="desc">Terbesar</option>
+            </select>
           )}
           <Button color="light" onClick={resetFilters}>
             <RotateCcw className="mr-2 h-5 w-5" />
-            Reset Filters
+            Reset
           </Button>
         </div>
         <Button onClick={handleDownload}>
@@ -117,17 +129,17 @@ const DataTable = ({ data, isAdmin, onEdit, onDelete }) => {
             ))}
           </Table.Head>
           <Table.Body className="divide-y">
-            {filteredData.map((row, rowIndex) => (
+            {sortedData.map((row, rowIndex) => (
               <Table.Row key={rowIndex} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-secondary dark:hover:bg-gray-600">
                 {headers.map((header, cellIndex) => {
                   if (header === 'ACTIONS' && isAdmin) {
                     return (
                       <Table.Cell key={cellIndex} className="font-medium whitespace-nowrap">
                         <Button.Group>
-                        <Button size="sm" onClick={() => onEdit(row)} className='flex flex-row items-center justify-center bg-yellow-400 h-fit py-1 w-24'>
-                        <Edit className="mr-2 h-4 w-4" />
-                        <p>Edit</p>
-                      </Button>
+                          <Button size="sm" onClick={() => onEdit(row)} className='flex flex-row items-center justify-center bg-yellow-400 h-fit py-1 w-24'>
+                            <Edit className="mr-2 h-4 w-4" />
+                            <p>Edit</p>
+                          </Button>
                           <Button color="failure" size="sm" onClick={() => onDelete(row)} className='flex flex-row bg-red-500 items-center py-1 w-24'>
                             <Trash className="mr-2 h-4 w-4" />
                             Delete

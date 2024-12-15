@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import DataTable from '../components/DataTable';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import DataTable from "../components/DataTable";
 
 const DataPage = () => {
   const [data, setData] = useState([]);
@@ -9,16 +10,15 @@ const DataPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/combined-data');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const jsonData = await response.json();
+        const response = await axios.get(
+          "http://localhost:3000/api/combined-data"
+        );
+        const jsonData = await response.data.data;
         setData(jsonData);
         setLoading(false);
-      } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Failed to fetch data: ' + err.message);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch data: " + error.message);
         setLoading(false);
       }
     };
@@ -26,15 +26,19 @@ const DataPage = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div className="min-h-screen p-4 text-white">Loading...</div>;
-  if (error) return <div className="min-h-screen  p-4 text-white">Error: {error}</div>;
+  if (loading)
+    return <div className="min-h-screen p-4 text-white">Loading...</div>;
+  if (error)
+    return <div className="min-h-screen  p-4 text-white">Error: {error}</div>;
 
   return (
     <div className="min-h-screen bg-[#1B4D99] p-4">
-      <h1 className="text-2xl font-bold mb-4 text-white px-4">Data Ketenagakerjaan</h1>
+      <h1 className="text-2xl font-bold mb-4 text-white px-4">
+        Data Ketenagakerjaan
+      </h1>
       <DataTable data={data} />
     </div>
   );
 };
 
-export default DataPage;
+export default DataPage;
