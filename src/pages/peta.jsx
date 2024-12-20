@@ -62,7 +62,7 @@ const Map = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://skripsi-backend-three.vercel.app/api/combined-data"
+          "https://skripsi-backend-three.vercel.app/api/combined-data"
         );
         const normalizedData = response.data.data.map((item) => ({
           ...item,

@@ -15,7 +15,7 @@ const LoginAdmin = () => {
     setMessage('');
     try {
       console.log('Attempting login with username:', username);
-      const response = await fetch('http://localhost:3000/api/login', {
+      const response = await fetch('https://skripsi-backend-three.vercel.app/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -44,7 +44,7 @@ const AdminPage = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:3000/api/combined-data'
+        'https://skripsi-backend-three.vercel.app/api/combined-data'
       );
       const jsonData = await response.data.data;
       setData(jsonData);
@@ -79,7 +79,7 @@ const AdminPage = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch(`http://localhost:3000/api/pencari-kerja/${row.NO}/${row.PROVINSI}`, {
+        const response = await fetch(`https://skripsi-backend-three.vercel.app/api/pencari-kerja/${row.NO}/${row.PROVINSI}`, {
           method: 'DELETE'
         });
 
@@ -152,7 +152,7 @@ const AdminPage = () => {
   
         // Only send request if there are changes
         if (Object.keys(updateData.pencariKerja).length > 0 || Object.keys(updateData.lowonganKerja).length > 0) {
-          const response = await fetch(`http://localhost:3000/api/update/${updatedRow.PROVINSI}`, {
+          const response = await fetch(`https://skripsi-backend-three.vercel.app/api/update/${updatedRow.PROVINSI}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updateData),
@@ -214,7 +214,7 @@ const AdminPage = () => {
       if (result.isConfirmed) {
         // First, try to add the province
         try {
-          const provinceResponse = await fetch('http://localhost:3000/api/provinsi', {
+          const provinceResponse = await fetch('https://skripsi-backend-three.vercel.app/api/provinsi', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: formData.PROVINSI })
@@ -282,7 +282,7 @@ const AdminPage = () => {
   
         if (pencariKerjaData.length > 0) {
           requests.push(
-            fetch('http://localhost:3000/api/pencari-kerja', {
+            fetch('https://skripsi-backend-three.vercel.app/api/pencari-kerja', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ data: pencariKerjaData }),
@@ -292,7 +292,7 @@ const AdminPage = () => {
   
         if (lowonganKerjaData.length > 0) {
           requests.push(
-            fetch('http://localhost:3000/api/lowongan-kerja', {
+            fetch('https://skripsi-backend-three.vercel.app/api/lowongan-kerja', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ data: lowonganKerjaData }),
