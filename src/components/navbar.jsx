@@ -18,7 +18,7 @@ const Navbar = () => {
         <div className="container mx-auto flex justify-between items-center px-1">
           <div>
           <Link to="/" className=" text-2xl font-bold uppercase text-secondary hover:text-white transition duration-300">
-            SIG
+            VisualJob.ID
           </Link>
           </div> 
 
