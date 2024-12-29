@@ -17,8 +17,8 @@ const Navbar = () => {
       <nav className="w-full py-3 bg-[#263956] ">
         <div className="container mx-auto flex justify-between items-center px-1">
           <div>
-          <Link to="/" className=" text-2xl font-bold uppercase text-secondary hover:text-white transition duration-300">
-            VisualJob.ID
+          <Link to="/" className=" text-xl font-bold  text-secondary hover:text-white transition duration-300">
+          VisualJob.ID
           </Link>
           </div> 
 
