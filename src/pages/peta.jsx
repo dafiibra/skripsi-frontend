@@ -156,20 +156,29 @@ const Map = () => {
         </h3>
         <div className="space-y-2">
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-green-500 mr-2"></div>
+            <div 
+              className="w-4 h-4 mr-2" 
+              style={{ backgroundColor: "green" }}
+            ></div>
             <span className="text-sm">
               {selectedFilter} {">"} {stats[`upper_${selectedFilter}`]}
             </span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-yellow-400 mr-2"></div>
+            <div 
+              className="w-4 h-4 mr-2" 
+              style={{ backgroundColor: "yellow" }}
+            ></div>
             <span className="text-sm">
               {stats[`lower_${selectedFilter}`]} ≤ {selectedFilter} ≤{" "}
               {stats[`upper_${selectedFilter}`]}
             </span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-red-500 mr-2"></div>
+            <div 
+              className="w-4 h-4 mr-2" 
+              style={{ backgroundColor: "red" }}
+            ></div>
             <span className="text-sm">
               {selectedFilter} {"<"} {stats[`lower_${selectedFilter}`]}
             </span>
