@@ -90,6 +90,26 @@ const Map = () => {
     return provinceData[selectedFilter];
   };
 
+  // Function to check if the selected filter is related to job seekers (pencari kerja)
+  const isJobSeekerFilter = (filter) => {
+    const jobSeekerFilters = [
+      "JUMLAH PENCARI KERJA TERDAFTAR",
+      "PENCARI KERJA LAKI-LAKI",
+      "PENCARI KERJA PEREMPUAN"
+    ];
+    return jobSeekerFilters.includes(filter);
+  };
+
+  // Function to check if the selected filter is related to job vacancies (lowongan kerja)
+  const isJobVacancyFilter = (filter) => {
+    const jobVacancyFilters = [
+      "JUMLAH LOWONGAN KERJA TERDAFTAR",
+      "LOWONGAN KERJA LAKI-LAKI",
+      "LOWONGAN KERJA PEREMPUAN"
+    ];
+    return jobVacancyFilters.includes(filter);
+  };
+
   const style = (feature) => {
     const province = feature.properties.NAME_1.toUpperCase() || "UNKNOWN";
 
@@ -100,9 +120,23 @@ const Map = () => {
     let fillColor = "grey";
     if (provinceData) {
       const value = getDisplayValue(provinceData);
-      if (value > upper) fillColor = "green";
-      else if (value < lower) fillColor = "red";
-      else fillColor = "yellow";
+      
+      if (isJobSeekerFilter(selectedFilter)) {
+        // For job seekers: HIGH value = BAD (red), LOW value = GOOD (green)
+        if (value > upper) fillColor = "red";        // Many job seekers = bad
+        else if (value < lower) fillColor = "green"; // Few job seekers = good
+        else fillColor = "yellow";                   // Medium = neutral
+      } else if (isJobVacancyFilter(selectedFilter)) {
+        // For job vacancies: HIGH value = GOOD (green), LOW value = BAD (red)
+        if (value > upper) fillColor = "green";      // Many vacancies = good
+        else if (value < lower) fillColor = "red";   // Few vacancies = bad
+        else fillColor = "yellow";                   // Medium = neutral
+      } else {
+        // Default logic for other filters (if any)
+        if (value > upper) fillColor = "green";
+        else if (value < lower) fillColor = "red";
+        else fillColor = "yellow";
+      }
     }
 
     return {
@@ -113,6 +147,8 @@ const Map = () => {
       fillOpacity: 0.7,
     };
   };
+
+
 
   return (
     <div className="relative">
