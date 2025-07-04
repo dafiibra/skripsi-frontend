@@ -65,31 +65,36 @@ const DataTable = ({ data, isAdmin, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4 space-x-4">
-        <div className="flex items-center space-x-4">
-          <div className="relative">
+    <div className="p-2 sm:p-4">
+      {/* Mobile-first responsive controls */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-3 sm:space-y-0 sm:space-x-4">
+        {/* Search and Filter Controls */}
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+          {/* Search Input */}
+          <div className="relative w-full sm:w-auto">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <Search className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </div>
             <input
               type="search"
-              className="block w-full p-2 pl-10 text-sm text-gray-900 border rounded-md border-gray-300 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block w-full sm:w-64 p-2 pl-10 text-sm text-gray-900 border rounded-md border-gray-300 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Cari Provinsi..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="relative w-64">
+
+          {/* Filter Dropdown */}
+          <div className="relative w-full sm:w-auto">
             <select
               value={filterColumn}
               onChange={(e) => setFilterColumn(e.target.value)}
-              className="w-full p-2 text-gray-700 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
+              className="w-full sm:w-64 p-2 text-gray-700 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600 text-sm"
             >
               <option value="">Urut Berdasarkan</option>
               {sortableColumns.map((column, index) => (
                 <option key={index} value={column}>
-                  {column}
+                  {column.length > 30 ? column.substring(0, 30) + '...' : column}
                 </option>
               ))}
             </select>
@@ -97,60 +102,90 @@ const DataTable = ({ data, isAdmin, onEdit, onDelete }) => {
               <Filter className="w-4 h-4 text-blue-500" />
             </div>
           </div>
+
+          {/* Sort Order */}
           {filterColumn && (
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="p-2 text-gray-700 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
+              className="w-full sm:w-auto p-2 text-gray-700 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600 text-sm"
             >
               <option value="">Urutan</option>
               <option value="asc">Terkecil</option>
               <option value="desc">Terbesar</option>
             </select>
           )}
-          <Button color="light" onClick={resetFilters}>
-            <RotateCcw className="mr-2 h-5 w-5" />
-            Reset
+
+          {/* Reset Button */}
+          <Button color="light" onClick={resetFilters} className="w-full sm:w-auto">
+            <RotateCcw className="mr-2 h-4 w-4" />
+            <span className="text-sm">Reset</span>
           </Button>
         </div>
-        <Button onClick={handleDownload}>
-          <Download className="mr-2 h-5 w-5 " />
-          Download Data
+
+        {/* Download Button */}
+        <Button onClick={handleDownload} className="w-full sm:w-auto">
+          <Download className="mr-2 h-4 w-4" />
+          <span className="text-sm">Download Data</span>
         </Button>
       </div>
 
+      {/* Responsive Table Container */}
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <Table striped className="w-full text-base text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <Table.Head className="text-sm text-gray-700 uppercase bg-gray-700 dark:bg-gray-700 dark:text-gray-400">
+        <Table striped className="w-full text-xs sm:text-sm lg:text-base text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <Table.Head className="text-xs sm:text-sm text-gray-700 uppercase bg-gray-700 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
             {headers.map((header, index) => (
-              <Table.HeadCell key={index} className="px-6 py-3">
-                {header}
+              <Table.HeadCell 
+                key={index} 
+                className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 whitespace-nowrap"
+              >
+                <span className="hidden lg:inline">{header}</span>
+                <span className="lg:hidden">
+                  {header.length > 15 ? header.substring(0, 15) + '...' : header}
+                </span>
               </Table.HeadCell>
             ))}
           </Table.Head>
           <Table.Body className="divide-y">
             {sortedData.map((row, rowIndex) => (
-              <Table.Row key={rowIndex} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-secondary dark:hover:bg-gray-600">
+              <Table.Row 
+                key={rowIndex} 
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-secondary dark:hover:bg-gray-600"
+              >
                 {headers.map((header, cellIndex) => {
                   if (header === 'ACTIONS' && isAdmin) {
                     return (
-                      <Table.Cell key={cellIndex} className="font-medium whitespace-nowrap">
-                        <Button.Group>
-                          <Button size="sm" onClick={() => onEdit(row)} className='flex flex-row items-center justify-center bg-yellow-400 h-fit py-1 w-24'>
-                            <Edit className="mr-2 h-4 w-4" />
-                            <p>Edit</p>
+                      <Table.Cell key={cellIndex} className="px-2 sm:px-4 lg:px-6 py-2 sm:py-4 font-medium whitespace-nowrap">
+                        <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
+                          <Button 
+                            size="xs" 
+                            onClick={() => onEdit(row)} 
+                            className='flex flex-row items-center justify-center bg-yellow-400 h-fit py-1 w-full sm:w-auto text-xs'
+                          >
+                            <Edit className="mr-1 h-3 w-3" />
+                            <span className="hidden sm:inline">Edit</span>
                           </Button>
-                          <Button color="failure" size="sm" onClick={() => onDelete(row)} className='flex flex-row bg-red-500 items-center py-1 w-24'>
-                            <Trash className="mr-2 h-4 w-4" />
-                            Delete
+                          <Button 
+                            color="failure" 
+                            size="xs" 
+                            onClick={() => onDelete(row)} 
+                            className='flex flex-row bg-red-500 items-center py-1 w-full sm:w-auto text-xs'
+                          >
+                            <Trash className="mr-1 h-3 w-3" />
+                            <span className="hidden sm:inline">Delete</span>
                           </Button>
-                        </Button.Group>
+                        </div>
                       </Table.Cell>
                     );
                   }
                   return (
-                    <Table.Cell key={cellIndex} className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {row[header]}
+                    <Table.Cell 
+                      key={cellIndex} 
+                      className="px-2 sm:px-4 lg:px-6 py-2 sm:py-4 font-medium text-gray-900 dark:text-white"
+                    >
+                      <div className="truncate max-w-[80px] sm:max-w-[120px] lg:max-w-none" title={row[header]}>
+                        {row[header]}
+                      </div>
                     </Table.Cell>
                   );
                 })}
@@ -158,6 +193,11 @@ const DataTable = ({ data, isAdmin, onEdit, onDelete }) => {
             ))}
           </Table.Body>
         </Table>
+      </div>
+
+      {/* Mobile Table Summary */}
+      <div className="mt-4 text-sm text-gray-600 text-center lg:hidden">
+        Menampilkan {sortedData.length} data dari {data.length} total data
       </div>
     </div>
   );

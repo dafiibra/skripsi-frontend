@@ -334,43 +334,84 @@ const AdminPage = () => {
     setEditingRow(null);
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (isLoading) return (
+    <div className="min-h-screen bg-[#090D44] flex items-center justify-center">
+      <div className="text-center text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+        <p className="text-lg">Loading...</p>
+      </div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="min-h-screen bg-[#090D44] flex items-center justify-center p-4">
+      <div className="text-center text-white max-w-md">
+        <div className="text-red-400 mb-4">
+          <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 15.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        </div>
+        <p className="text-lg">Error: {error}</p>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="mx-auto p-4" style={{ backgroundColor: '#090D44', minHeight: '100vh' }}>
+    <div className="mx-auto p-2 sm:p-4 lg:p-6" style={{ backgroundColor: '#090D44', minHeight: '100vh' }}>
       {showAlert && (
-        <div className="fixed top-4 right-4 z-50">
+        <div className="fixed top-4 right-4 z-50 max-w-sm">
           <Alert color={alertType === 'success' ? 'success' : 'failure'}>
             {alertMessage}
           </Alert>
         </div>
       )}
       
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold px-4 text-white">Admin Dashboard</h1>
-        <div className="flex items-center">
-          <Button onClick={() => setShowModal(true)} className='mx-4 bg-green-500'>
-            <PlusCircle className="mr-3 h-5 w-5 " />
-            Add New Data
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+        <div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold px-2 sm:px-4 text-white">
+            Admin Dashboard
+          </h1>
+          <p className="text-sm sm:text-base text-blue-200 px-2 sm:px-4 mt-1">
+            Kelola data ketenagakerjaan
+          </p>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 px-2 sm:px-4">
+          <Button 
+            onClick={() => setShowModal(true)} 
+            className='w-full sm:w-auto bg-green-500 hover:bg-green-600 text-sm sm:text-base'
+          >
+            <PlusCircle className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="sm:inline">Add New Data</span>
           </Button>
-          <Button onClick={handleLogout} className='mx-4 bg-red-500'>
-            <LogOut className="mr-3 h-5 w-5 " />
-            Logout
+          <Button 
+            onClick={handleLogout} 
+            className='w-full sm:w-auto bg-red-500 hover:bg-red-600 text-sm sm:text-base'
+          >
+            <LogOut className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="sm:inline">Logout</span>
           </Button>
         </div>
       </div>
       
-      <DataTable
-        data={data}
-        isAdmin={true}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {/* Data Table */}
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <DataTable
+          data={data}
+          isAdmin={true}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      </div>
 
-      <Modal show={showModal} onClose={handleCloseModal} className="mx-20">
-        <Modal.Header>{editingRow ? 'Edit Entry' : 'Add New Entry'}</Modal.Header>
-        <Modal.Body className="bg--500">
+      {/* Responsive Modal */}
+      <Modal show={showModal} onClose={handleCloseModal} className="p-2 sm:p-4">
+        <Modal.Header className="text-lg sm:text-xl">
+          {editingRow ? 'Edit Entry' : 'Add New Entry'}
+        </Modal.Header>
+        <Modal.Body className="max-h-[70vh] overflow-y-auto">
           <form onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
@@ -381,26 +422,62 @@ const AdminPage = () => {
               handleAdd(rowData);
             }
           }}>
-            {['PROVINSI', 'JUMLAH PENCARI KERJA TERDAFTAR', 'JUMLAH LOWONGAN KERJA TERDAFTAR',
-              'PENCARI KERJA LAKI-LAKI', 'PENCARI KERJA PEREMPUAN', 'LOWONGAN KERJA LAKI-LAKI',
-              'LOWONGAN KERJA PEREMPUAN'].map((field) => (
-              <div key={field} className="mb-2">
-                <Label htmlFor={field}>{field} {field === 'PROVINSI' && <span className="text-red-500">*</span>}</Label>
-                <TextInput
-                  id={field}
-                  name={field}
-                  defaultValue={editingRow ? editingRow[field] : ''}
-                  type={field === 'PROVINSI' ? 'text' : 'number'}
-                  required={field === 'PROVINSI'}
-                />
-              </div>
-            ))}
-            <Button type="submit" className="mt-4 bg-blue-500">
-              {editingRow ? 'Save Changes' : 'Add Entry'}
-            </Button>
+            <div className="space-y-3 sm:space-y-4">
+              {['PROVINSI', 'JUMLAH PENCARI KERJA TERDAFTAR', 'JUMLAH LOWONGAN KERJA TERDAFTAR',
+                'PENCARI KERJA LAKI-LAKI', 'PENCARI KERJA PEREMPUAN', 'LOWONGAN KERJA LAKI-LAKI',
+                'LOWONGAN KERJA PEREMPUAN'].map((field) => (
+                <div key={field}>
+                  <Label htmlFor={field} className="text-sm sm:text-base">
+                    {field.length > 25 ? field.substring(0, 25) + '...' : field}
+                    {field === 'PROVINSI' && <span className="text-red-500 ml-1">*</span>}
+                  </Label>
+                  <TextInput
+                    id={field}
+                    name={field}
+                    defaultValue={editingRow ? editingRow[field] : ''}
+                    type={field === 'PROVINSI' ? 'text' : 'number'}
+                    required={field === 'PROVINSI'}
+                    className="mt-1"
+                    placeholder={field === 'PROVINSI' ? 'Masukkan nama provinsi' : 'Masukkan angka'}
+                  />
+                </div>
+              ))}
+            </div>
+            
+            {/* Modal Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 mt-6">
+              <Button 
+                type="submit" 
+                className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 order-1 sm:order-1"
+              >
+                {editingRow ? 'Save Changes' : 'Add Entry'}
+              </Button>
+              <Button 
+                type="button"
+                color="gray" 
+                onClick={handleCloseModal}
+                className="w-full sm:w-auto order-2 sm:order-2"
+              >
+                Cancel
+              </Button>
+            </div>
           </form>
         </Modal.Body>
       </Modal>
+
+      {/* Mobile Stats Summary */}
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:hidden">
+        <div className="bg-white p-4 rounded-lg shadow-md text-center">
+          <p className="text-sm text-gray-600">Total Entries</p>
+          <p className="text-2xl font-bold text-blue-600">{data.length}</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md text-center">
+          <p className="text-sm text-gray-600">Last Updated</p>
+          <p className="text-sm font-semibold text-gray-800">
+            {new Date().toLocaleDateString()}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

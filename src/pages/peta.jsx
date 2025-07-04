@@ -148,20 +148,18 @@ const Map = () => {
     };
   };
 
-
-
   return (
     <div className="relative">
-      {/* Dropdown for selecting filter */}
-      <div className="absolute top-4 right-4 z-[1000] flex gap-4">
-        <div className="flex flex-col">
-          <label className="text-sm font-medium mb-1 text-gray-700">
+      {/* Responsive Dropdown for selecting filter */}
+      <div className="absolute top-2 sm:top-4 left-2 right-2 sm:left-auto sm:right-4 z-[1000] flex gap-2 sm:gap-4">
+        <div className="flex flex-col w-full sm:w-auto">
+          <label className="text-xs sm:text-sm font-medium mb-1 text-gray-700 bg-white px-2 py-1 rounded-t-md sm:bg-transparent sm:px-0 sm:py-0">
             Pilih Jenis Data
           </label>
           <select
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
-            className="w-64 p-2 text-gray-700 bg-white border rounded-md shadow-sm outline-none focus:border-indigo-600"
+            className="w-full sm:w-64 lg:w-80 p-2 text-xs sm:text-sm text-gray-700 bg-white border rounded-md shadow-sm outline-none focus:border-indigo-600"
           >
             <option value="JUMLAH PENCARI KERJA TERDAFTAR">
               Jumlah Pencari Kerja Terdaftar
@@ -185,44 +183,52 @@ const Map = () => {
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="absolute bottom-9 right-6 z-[1000] bg-white p-4 rounded-lg shadow-md">
-        <h3 className="font-bold mb-2 text-sm">
-          Klasifikasi Berdasarkan {selectedFilter}
+      {/* Responsive Legend */}
+      <div className="absolute bottom-2 sm:bottom-4 left-2 right-2 sm:left-auto sm:right-4 lg:right-6 z-[1000] bg-white p-2 sm:p-4 rounded-lg shadow-md max-w-xs sm:max-w-sm lg:max-w-md">
+        <h3 className="font-bold mb-2 text-xs sm:text-sm lg:text-base">
+          Klasifikasi Berdasarkan 
+          <span className="block sm:inline sm:ml-1">
+            {selectedFilter.length > 20 ? selectedFilter.substring(0, 20) + '...' : selectedFilter}
+          </span>
         </h3>
-        <div className="space-y-2">
+        <div className="space-y-1 sm:space-y-2">
           <div className="flex items-center">
             <div 
-              className="w-4 h-4 mr-2" 
+              className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" 
               style={{ backgroundColor: "green" }}
             ></div>
-            <span className="text-sm">
+            <span className="text-xs sm:text-sm break-words">
               {selectedFilter} {">"} {stats[`upper_${selectedFilter}`]}
             </span>
           </div>
           <div className="flex items-center">
             <div 
-              className="w-4 h-4 mr-2" 
+              className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" 
               style={{ backgroundColor: "yellow" }}
             ></div>
-            <span className="text-sm">
-              {stats[`lower_${selectedFilter}`]} ≤ {selectedFilter} ≤{" "}
+            <span className="text-xs sm:text-sm break-words">
+              {stats[`lower_${selectedFilter}`]} ≤ {selectedFilter.length > 15 ? selectedFilter.substring(0, 15) + '...' : selectedFilter} ≤{" "}
               {stats[`upper_${selectedFilter}`]}
             </span>
           </div>
           <div className="flex items-center">
             <div 
-              className="w-4 h-4 mr-2" 
+              className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" 
               style={{ backgroundColor: "red" }}
             ></div>
-            <span className="text-sm">
-              {selectedFilter} {"<"} {stats[`lower_${selectedFilter}`]}
+            <span className="text-xs sm:text-sm break-words">
+              {selectedFilter.length > 15 ? selectedFilter.substring(0, 15) + '...' : selectedFilter} {"<"} {stats[`lower_${selectedFilter}`]}
             </span>
           </div>
         </div>
       </div>
 
-      <MapContainer center={[0, 120]} zoom={5} className="w-full h-screen">
+      <MapContainer 
+        center={[0, 120]} 
+        zoom={5} 
+        className="w-full h-screen"
+        zoomControl={false}
+      >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -235,15 +241,18 @@ const Map = () => {
 
             return (
               <Marker key={province} position={coordinates}>
-                <Popup>
-                  <div className="font-sans">
-                    <h3 className="font-bold mb-2">{province}</h3>
+                <Popup className="custom-popup">
+                  <div className="font-sans p-1">
+                    <h3 className="font-bold mb-2 text-sm sm:text-base">{province}</h3>
                     {provinceData ? (
-                      <p>
-                        {selectedFilter}: <strong>{displayValue}</strong>
-                      </p>
+                      <div className="text-xs sm:text-sm">
+                        <p className="font-medium">
+                          {selectedFilter.length > 25 ? selectedFilter.substring(0, 25) + '...' : selectedFilter}:
+                        </p>
+                        <p className="font-bold text-blue-600">{displayValue?.toLocaleString()}</p>
+                      </div>
                     ) : (
-                      <p>Data tidak tersedia</p>
+                      <p className="text-xs sm:text-sm text-gray-500">Data tidak tersedia</p>
                     )}
                   </div>
                 </Popup>

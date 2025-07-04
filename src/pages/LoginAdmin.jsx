@@ -43,52 +43,90 @@ const LoginAdmin = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: `url(${LoginImg})` }}
-    >
-      <div className="w-full max-w-md p-6 bg-blue-900 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-white mb-6">LOGIN ADMIN</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="username" className="block text-sm font-medium text-white mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 bg-blue-800 bg-opacity-50 border border-blue-700 rounded-md text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your username"
-              required
-            />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
+      {/* Background Image Container */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${LoginImg})` }}
+      >
+        <div className="absolute inset-0 bg-blue-900 bg-opacity-75"></div>
+      </div>
+
+      {/* Login Form Container */}
+      <div className="relative z-10 w-full max-w-md">
+        <div className="bg-blue-900 bg-opacity-95 backdrop-blur-sm rounded-lg shadow-2xl p-6 sm:p-8 border border-blue-700">
+          {/* Header */}
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">LOGIN ADMIN</h2>
+            <p className="text-blue-200 text-sm">Masuk ke dashboard administrator</p>
           </div>
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-blue-800 bg-opacity-50 border border-blue-700 rounded-md text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your password"
-              required
-            />
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-white mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 bg-blue-800 bg-opacity-50 border border-blue-700 rounded-md text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Enter your username"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-blue-800 bg-opacity-50 border border-blue-700 rounded-md text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-md hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Logging in...
+                </div>
+              ) : (
+                'Login'
+              )}
+            </button>
+          </form>
+
+          {/* Message Display */}
+          {message && (
+            <div className={`mt-4 p-3 rounded-md text-center text-sm ${
+              message.includes('successful') 
+                ? 'bg-green-600 bg-opacity-20 border border-green-500 text-green-200' 
+                : 'bg-red-600 bg-opacity-20 border border-red-500 text-red-200'
+            }`}>
+              {message}
+            </div>
+          )}
+
+          {/* Footer */}
+          <div className="mt-6 pt-4 border-t border-blue-700">
+            <p className="text-center text-xs text-blue-300">
+              Sistem Informasi Geografis VisualJob.ID
+            </p>
           </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-        {message && (
-          <p className="mt-4 text-center text-white">{message}</p>
-        )}
+        </div>
       </div>
     </div>
   );
