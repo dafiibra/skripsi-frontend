@@ -123,8 +123,8 @@ const Map = () => {
       
       if (isJobSeekerFilter(selectedFilter)) {
         // For job seekers: HIGH value = BAD (red), LOW value = GOOD (green)
-        if (value > upper) fillColor = "green";        // Many job seekers = bad
-        else if (value < lower) fillColor = "red"; // Few job seekers = good
+        if (value > upper) fillColor = "red";        // Many job seekers = bad
+        else if (value < lower) fillColor = "green"; // Few job seekers = good
         else fillColor = "yellow";                   // Medium = neutral
       } else if (isJobVacancyFilter(selectedFilter)) {
         // For job vacancies: HIGH value = GOOD (green), LOW value = BAD (red)
@@ -133,8 +133,8 @@ const Map = () => {
         else fillColor = "yellow";                   // Medium = neutral
       } else {
         // Default logic for other filters (if any)
-        if (value > upper) fillColor = "green";
-        else if (value < lower) fillColor = "red";
+        if (value > upper) fillColor = "red";
+        else if (value < lower) fillColor = "green";
         else fillColor = "yellow";
       }
     }
