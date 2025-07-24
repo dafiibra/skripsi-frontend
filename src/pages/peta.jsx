@@ -123,13 +123,13 @@ const Map = () => {
       
       if (isJobSeekerFilter(selectedFilter)) {
         // For job seekers: HIGH value = BAD (red), LOW value = GOOD (green)
-        if (value > upper) fillColor = "red";        // Many job seekers = bad
-        else if (value < lower) fillColor = "green"; // Few job seekers = good
+        if (value > upper) fillColor = "green";        // Many job seekers = bad
+        else if (value < lower) fillColor = "red"; // Few job seekers = good
         else fillColor = "yellow";                   // Medium = neutral
       } else if (isJobVacancyFilter(selectedFilter)) {
         // For job vacancies: HIGH value = GOOD (green), LOW value = BAD (red)
-        if (value > upper) fillColor = "green";      // Many vacancies = good
-        else if (value < lower) fillColor = "red";   // Few vacancies = bad
+        if (value > upper) fillColor = "red";      // Many vacancies = good
+        else if (value < lower) fillColor = "green";   // Few vacancies = bad
         else fillColor = "yellow";                   // Medium = neutral
       } else {
         // Default logic for other filters (if any)
@@ -195,7 +195,7 @@ const Map = () => {
           <div className="flex items-center">
             <div 
               className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" 
-              style={{ backgroundColor: "green" }}
+              style={{ backgroundColor: "red" }}
             ></div>
             <span className="text-xs sm:text-sm break-words">
               {selectedFilter} {">"} {stats[`upper_${selectedFilter}`]}
@@ -214,7 +214,7 @@ const Map = () => {
           <div className="flex items-center">
             <div 
               className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" 
-              style={{ backgroundColor: "red" }}
+              style={{ backgroundColor: "green" }}
             ></div>
             <span className="text-xs sm:text-sm break-words">
               {selectedFilter.length > 15 ? selectedFilter.substring(0, 15) + '...' : selectedFilter} {"<"} {stats[`lower_${selectedFilter}`]}
